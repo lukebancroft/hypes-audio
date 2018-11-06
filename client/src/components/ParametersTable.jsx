@@ -74,7 +74,7 @@ export default class ParametersTable extends React.Component {
             <Button onClick={this.handleReset(clearFilters)}>Reset</Button>
           </div>
         ),
-        filterIcon: filtered => <Icon type="smile-o" style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
+        filterIcon: filtered => <Icon type="search" style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
         onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
         onFilterDropdownVisibleChange: (visible) => {
           if (visible) {
@@ -114,7 +114,7 @@ export default class ParametersTable extends React.Component {
 
 
     return (
-        <Table columns={columns} dataSource={data} pagination={{pageSizeOptions: ['5', '10'], showSizeChanger: true}} />
+        <Table columns={columns} dataSource={data} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 5}} />
     );
   }
 }

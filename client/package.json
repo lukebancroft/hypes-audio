@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@firebase/app": "^0.3.4",
+    "@firebase/firestore": "^0.8.6",
     "antd": "^3.10.4",
+    "firebase": "^5.5.7",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-scripts": "2.1.1"
