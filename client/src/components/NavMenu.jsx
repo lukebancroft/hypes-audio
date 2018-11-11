@@ -11,7 +11,7 @@ export default class NavMenu extends React.Component {
         selectedKeys={[this.props.currentPage]}
         mode={this.props.menuMode}>
             <Menu.Item key="logo" disabled>
-                <img src={require('../assets/logos/logo3.png')} alt="logo" height="44px" width="125px" />
+                <img src="/hypes-audio_logo.png" alt="logo" height="44px" width="125px" />
             </Menu.Item>
             <Menu.Item key="home">
                 <Icon type="global" />Home

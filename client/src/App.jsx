@@ -21,7 +21,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.currentPage == 'home') {
+    if (this.state.currentPage === 'home') {
       return (
         <div className="App">
           <Layout>
@@ -37,7 +37,7 @@ class App extends Component {
           </Layout>
         </div>
       );
-    } else if (this.state.currentPage == 'gallery') {
+    } else if (this.state.currentPage === 'gallery') {
       return(
         <div className="App">
           <Layout>
@@ -50,12 +50,13 @@ class App extends Component {
             <Layout className="dark-bg" >
               <Gallery 
                 plugins = {this.state.plugins}
+                goToPage = {this.goToPage.bind(this)}
               />
             </Layout>
           </Layout>
         </div>
       )
-    } else if (this.state.currentPage == 'plugins') {
+    } else if (this.state.currentPage === 'plugins') {
       return(
         <div className="App">
           <Layout>
@@ -73,7 +74,7 @@ class App extends Component {
           </Layout>
         </div>
       )
-    } else if (this.state.currentPage == 'pedalboards') {
+    } else if (this.state.currentPage === 'pedalboards') {
       return(
         <div className="App">
           <Layout>
@@ -97,6 +98,12 @@ class App extends Component {
   handlePageChange = (e) => {
     this.setState({
       currentPage: e.key
+    });
+  }
+
+  goToPage(page) {
+    this.setState({
+      currentPage: page
     });
   }
 
