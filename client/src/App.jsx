@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import NavMenu from './components/NavMenu';
 import ParametersTable from './components/ParametersTable';
 import Gallery from './components/Gallery';
-import firestore from "./firestore";
+import firestore, { auth, googleProvider, githubProvider, facebookProvider } from "./firestore";
 import './App.css';
 import { Layout } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
+import Login from './components/Login'
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
         currentPage: 'home',
-        plugins: []
+        plugins: [],
     }
   }
 
@@ -32,7 +33,7 @@ class App extends Component {
             />
 
             <Layout>
-
+              <Login/>
             </Layout>
           </Layout>
         </div>
@@ -129,7 +130,6 @@ class App extends Component {
        plugins: pluginArr
      });
   }
-
 }
 
 export default App;

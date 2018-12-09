@@ -112,3 +112,16 @@
 .ant-row-flex {
   padding-bottom: 25px;
 }
+
+.user-profile {
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+}
+
+.user-profile img {
+  border-radius: 50%;
+  max-width: 100%;
+}
