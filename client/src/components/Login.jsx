@@ -7,8 +7,13 @@ export default class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            email: '',
+            password: '',
             user: null
         }
+        this.handleChange = this.handleChange.bind(this);
+
+        this.loginWithEmailAndPassword = this.loginWithEmailAndPassword.bind(this);
         this.loginWithFacebook = this.loginWithFacebook.bind(this);
         this.loginWithGithub = this.loginWithGithub.bind(this);
         this.loginWithGoogle = this.loginWithGoogle.bind(this);
@@ -23,6 +28,10 @@ export default class Login extends React.Component {
         });
     }
 
+    handleChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+
     render() {
         return (
             <div className='app'>
@@ -35,7 +44,7 @@ export default class Login extends React.Component {
                             </button>
                         </div>               
                         :
-                <form>
+                <form onSubmit={this.loginWithEmailAndPassword}>
                     <div className="row">
                         <h2 style={{textAlign:"center"}}>Login with Social Media or Manually</h2>
                         <div className="vl">
@@ -58,9 +67,8 @@ export default class Login extends React.Component {
                             <div className="hide-md-lg">
                                 <p>Or sign in manually:</p>
                             </div>
-
-                            <input type="text" name="username" placeholder="Username" required/>
-                            <input type="password" name="password" placeholder="Password" required/>
+                            <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} required/>
+                            <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} required/>
                             <input type="submit" value="Login"/>
                         </div>
                     </div>
@@ -81,32 +89,6 @@ export default class Login extends React.Component {
             </div>
             }
             </div>
-
-
-
-            /*<div className='app'>
-                <header>
-                    <div className="wrapper">
-                    <h1>MOD</h1>
-                    {this.state.user ?
-                        <button onClick={this.logout}>Logout</button>                
-                        :
-                        <button onClick={this.login}>Log In</button>              
-                    }
-                    </div>
-                </header>
-                {this.state.user ?
-                    <div>
-                    <div className='user-profile'>
-                        <img src={this.state.user.photoURL} />
-                    </div>
-                    </div>
-                    :
-                    <div className='wrapper'>
-                    <p>You must be logged in to see the potluck list and submit to it.</p>
-                    </div>
-                }
-            </div>*/
         );
     }
 
@@ -114,27 +96,20 @@ export default class Login extends React.Component {
         auth.signOut()
         .then(() => {
         this.setState({
+            email: '',
+            password: '',
             user: null
         });
         });
     }
 
-    loginWithGithub() {
-        auth.signInWithPopup(githubProvider) 
+    loginWithEmailAndPassword(event) {
+        event.preventDefault();
+        auth.createUserWithEmailAndPassword(this.state.email, this.state.password) 
         .then((result) => {
             const user = result.user;
             this.setState({
-            user
-            });
-        });
-    }
-
-    loginWithGoogle() {
-        auth.signInWithPopup(googleProvider) 
-        .then((result) => {
-            const user = result.user;
-            this.setState({
-            user
+                user
             });
         });
     }
@@ -144,7 +119,27 @@ export default class Login extends React.Component {
         .then((result) => {
             const user = result.user;
             this.setState({
-            user
+                user
+            });
+        });
+    }
+
+    loginWithGithub() {
+        auth.signInWithPopup(githubProvider) 
+        .then((result) => {
+            const user = result.user;
+            this.setState({
+                user
+            });
+        });
+    }
+
+    loginWithGoogle() {
+        auth.signInWithPopup(googleProvider) 
+        .then((result) => {
+            const user = result.user;
+            this.setState({
+                user
             });
         });
     }
