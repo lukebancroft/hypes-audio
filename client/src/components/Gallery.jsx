@@ -3,13 +3,30 @@ import { Card, Button, Row, Col } from 'antd';
 const { Meta } = Card;
 
 export default class Gallery extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+          classics: []
+      }
+    }
+
+
+    componentDidMount() {
+        const self = this;
+        //this.enableLoader();
+        this.props.getFSdoc("plugins", "Collection", "classics", function(plugins) {
+            self.setState({ classics: plugins }, () => {
+                //self.disableLoader();
+              });
+        })
+    }
 
     makeGalleryRows() {
         let gallery = [];
         let i, chunk = 3;
 
-        for (i=0; i < this.props.plugins.length; i += chunk) {
-            let galleryItems = this.props.plugins.slice(i, i + chunk);
+        for (i=0; i < this.state.classics.length; i += chunk) {
+            let galleryItems = this.state.classics.slice(i, i + chunk);
             gallery.push(
                 <Row type="flex" key={"plugin_row_" + i}>
                     <Col span={1}></Col>

@@ -2,6 +2,7 @@
 
 .App {
   text-align: center;
+  font-family: 'Raleway', sans-serif;
 }
 
 .App-logo {
@@ -34,10 +35,17 @@
 }
 
 .dark-bg {
-  background-color: rgb(51, 51, 51)
+  background-color: rgb(51, 51, 51) !important;
+}
+
+.layoutContent {
+  min-height: 100vh;
+  overflow: auto;
+  background-color: rgb(246, 246, 246);
 }
 
 .ant-layout-sider {
+  min-height: 100vh;
   background-color: #ffffff;
 }
 
@@ -113,6 +121,25 @@
   padding-bottom: 25px;
 }
 
+.stack-card .ant-card-meta-title {
+  white-space: normal;
+}
+
+.stack-card {
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+  width: 200px;
+  background: #ffffff;
+  margin-bottom: 5px;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.stack-card img {
+  max-width:100%;
+  max-height:100%;
+}
+
 .user-profile {
   position: fixed;
   bottom: 20px;
@@ -124,4 +151,105 @@
 .user-profile img {
   border-radius: 50%;
   max-width: 100%;
+}
+
+.gridHeader {
+  padding-top: 30px;
+}
+
+.gridHeader input {
+  border: none;
+  border-radius: 0px;
+  border-color: none;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1)
+}
+
+.gridHeader button {
+  border-radius: 0px;
+  background-color: #883996;
+}
+
+.gridHeader h1 {
+  color: #883996;
+  font-weight: 700;
+  font-size: 2em;
+}
+
+.gridHeader p {
+  font-size: 1.25rem;
+  font-style: italic;
+}
+
+.gridHeader .ant-divider-horizontal {
+  background-color: #883996;
+  width: 100px;
+  min-width: unset;
+  margin: 30px auto;
+}
+
+.grid-item {
+  padding: 3px;
+}
+
+.tagContainer {
+  display: block;
+  text-align: center;
+}
+
+.tagContainer .ant-divider-horizontal {
+  margin: 10px 0;
+}
+
+.pluginTag {
+  padding: 5px;
+  background-color: #883996;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: .9em;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.pluginTag:hover {
+  color: #ffffff;
+}
+
+.pluginInfo a {
+  display: block;
+  text-decoration: none;
+  color: #444444;
+}
+
+.pluginInfo .creator {
+  display: block;
+  color: #883996;
+  font-size: .8em;
+}
+
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
