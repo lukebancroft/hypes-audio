@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import NavMenu from './components/NavMenu';
 import ParametersTable from './components/ParametersTable';
 import Gallery from './components/Gallery';
-import firestore, { auth, googleProvider, githubProvider, facebookProvider } from "./firestore";
+import firestore from "./firestore";
 import './assets/App.css';
 import { Layout } from 'antd';
 import Login from './components/Login'
