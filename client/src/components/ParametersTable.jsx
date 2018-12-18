@@ -1,120 +1,45 @@
 import React from 'react';
-import { Table, Input, Button, Icon } from 'antd';
-
-const data = [{
-  key: '1',
-  name: 'John Brown',
-  age: 32,
-  address: 'New York No. 1 Lake Park',
-}, {
-  key: '2',
-  name: 'Joe Black',
-  age: 42,
-  address: 'London No. 1 Lake Park',
-}, {
-  key: '3',
-  name: 'Jim Green',
-  age: 32,
-  address: 'Sidney No. 1 Lake Park',
-}, {
-  key: '4',
-  name: 'Jim Red',
-  age: 32,
-  address: 'London No. 2 Lake Park',
-}, {
-    key: '5',
-    name: 'Luke Bancroft-Richardson',
-    age: 22,
-    address: 'London No. 2 Lake Park',
-  }, {
-    key: '6',
-    name: 'Michel Buffa',
-    age: 39,
-    address: 'London No. 2 Lake Park',
-  }, {
-    key: '7',
-    name: 'Imagine Dragons',
-    age: 29,
-    address: 'London No. 2 Lake Park',
-  }];
+import { Table } from 'antd';
 
 export default class ParametersTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchText: '',
+            columns: [],
+            data: []
         }
     }
-        
-    handleSearch = (selectedKeys, confirm) => () => {
-        confirm();
-        this.setState({ searchText: selectedKeys[0] });
-    }
-        
-    handleReset = clearFilters => () => {
-        clearFilters();
-       this.setState({ searchText: '' });
+
+    componentDidMount() {
+      let columnsContent = [];
+      let dataContent = [];
+
+      if (this.props.headers.length > 0 && this.props.data.length > 0) {
+        for (let i = 0; i < this.props.headers.length; i++) {
+          let header = this.props.headers[i].toString();
+          columnsContent.push({
+            title: header,
+            dataIndex: header,
+            key: header
+          });
+        }
+  
+        for (let j = 0; j < this.props.data[0].length; j++) {
+          dataContent.push({'key': j});
+          for (let k = 0; k < columnsContent.length; k++) {
+            dataContent[j][columnsContent[k].title] = this.props.data[k][j]
+          }
+        }
+  
+        this.setState({
+          columns: columnsContent, data: dataContent
+        });
+      }
     }
 
   render() {
-    const columns = [{
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-          <div className="custom-filter-dropdown">
-            <Input
-              ref={ele => this.searchInput = ele}
-              placeholder="Search name"
-              value={selectedKeys[0]}
-              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={this.handleSearch(selectedKeys, confirm)}
-            />
-            <Button type="primary" onClick={this.handleSearch(selectedKeys, confirm)}>Search</Button>
-            <Button onClick={this.handleReset(clearFilters)}>Reset</Button>
-          </div>
-        ),
-        filterIcon: filtered => <Icon type="search" style={{ color: filtered ? '#108ee9' : '#aaa' }} />,
-        onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
-        onFilterDropdownVisibleChange: (visible) => {
-          if (visible) {
-            setTimeout(() => {
-              this.searchInput.focus();
-            });
-          }
-        },
-        render: (text) => {
-          const { searchText } = this.state;
-          return searchText ? (
-            <span>
-              {text.split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i')).map((fragment, i) => (
-                fragment.toLowerCase() === searchText.toLowerCase()
-                  ? <span key={i} className="highlight">{fragment}</span> : fragment // eslint-disable-line
-              ))}
-            </span>
-          ) : text;
-        },
-      }, {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
-      }, {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-        filters: [{
-          text: 'London',
-          value: 'London',
-        }, {
-          text: 'New York',
-          value: 'New York',
-        }],
-        onFilter: (value, record) => record.address.indexOf(value) === 0,
-      }];
-
-
     return (
-        <Table columns={columns} dataSource={data} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 5}} />
+        <Table columns={this.state.columns} dataSource={this.state.data} pagination={false} />
     );
   }
 }

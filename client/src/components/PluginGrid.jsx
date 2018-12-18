@@ -1,8 +1,7 @@
 import React from 'react';
-import { Card, Row, Col, Divider, Input } from 'antd';
+import { Row, Col, Divider, Input } from 'antd';
 import Masonry from 'react-mason';
 import '../assets/App.css';
-const { Meta } = Card;
 
 const Search = Input.Search;
 
@@ -24,8 +23,6 @@ export default class PluginGrid extends React.Component {
         this.enableLoader();
         this.props.getFSdoc("plugins", "Collection", "shop", function(plugins) {
             self.setState({ plugins: plugins });
-            console.log(self.state.plugins[1].Tags);
-            console.log(self.state.plugins[1].Tags[0]);
         })
     }
 
@@ -45,10 +42,7 @@ export default class PluginGrid extends React.Component {
     }
 
     imageCount() {
-        console.log("loaded");
         this.setState({ loadedImages: this.state.loadedImages + 1 }, () => {
-            console.log("images :" + this.state.loadedImages);
-            console.log("plugins :" + this.state.plugins.length);
             if (this.state.loadedImages === this.state.plugins.length) {
                 this.disableLoader();
             }
@@ -76,25 +70,29 @@ export default class PluginGrid extends React.Component {
             <div id="loader"></div>
 
             <div id="stack">
-                <Masonry>
-                    {this.state.plugins.map(plugin => 
-                        <div  key={plugin.Name} className="stack-card">
-                            <a>
-                                <img src={plugin.ImageUrl} alt={plugin.Name} onLoad={this.imageCount}></img>
-                            </a>
-                            <div className="tagContainer">
-                                {Array.from(plugin.Tags).map(tag => 
-                                    <a key={plugin.Name + "_" + tag} className="pluginTag">{tag}</a>
-                                )}
-                            </div>
-                            <div className="pluginInfo">
-                                <Divider />
-                                <a>{plugin.Name}</a>
-                                <a className="creator">{plugin.Creator}</a>
-                            </div>
-                        </div>
-                    )}
-                </Masonry>
+                <Row>
+                    <Col span={20} offset={2}>
+                        <Masonry>
+                            {this.state.plugins.map(plugin => 
+                                <div  key={plugin.Name} className="stack-card">
+                                    <a onClick={() => {this.props.goToDetails(plugin)}}>
+                                        <img src={plugin.ImageUrl} alt={plugin.Name} onLoad={this.imageCount}></img>
+                                    </a>
+                                    <div className="tagContainer">
+                                        {Array.from(plugin.Tags).map(tag => 
+                                            <a key={plugin.Name + "_" + tag} className="pluginTag">{tag}</a>
+                                        )}
+                                    </div>
+                                    <div className="pluginInfo">
+                                        <Divider />
+                                        <a onClick={() => {this.props.goToDetails(plugin)}}>{plugin.Name}</a>
+                                        <a className="creator">{plugin.Creator}</a>
+                                    </div>
+                                </div>
+                            )}
+                        </Masonry>
+                    </Col>
+                </Row>
             </div>
         </div>
     );

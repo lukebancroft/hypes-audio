@@ -38,6 +38,11 @@
   background-color: rgb(51, 51, 51) !important;
 }
 
+.ant-menu {
+  z-index: 10;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+}
+
 .layoutContent {
   min-height: 100vh;
   overflow: auto;
@@ -121,6 +126,15 @@
   padding-bottom: 25px;
 }
 
+.ant-input-search button {
+  border-color: #883996;
+}
+
+.ant-input-search button:hover {
+  border-color: #883996;
+  background-color: #883996;
+}
+
 .stack-card .ant-card-meta-title {
   white-space: normal;
 }
@@ -189,7 +203,6 @@
 .container {
   position: relative;
   border-radius: 5px;
-  background-color: #f2f2f2;
   padding: 20px 0 30px 0;
 } 
 
@@ -405,4 +418,91 @@ input[type=submit]:hover {
     display: block;
     text-align: center;
   }
+}
+
+.pluginDetails {
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
+  width: 60%;
+  margin: 60px auto;
+  padding: 15px;
+}
+
+.pluginDetails h2 {
+  color: #883996;
+  font-weight: bold;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.pluginDetails .description {
+  white-space: pre-wrap;
+  line-height: 1.5em;
+}
+
+.pluginDetails .pluginImg {
+  max-width: 100%;
+  max-height: 400px;
+  display: block;
+  clear: both;
+  margin: 0 auto;
+}
+
+.pluginDetails .logo {
+  float: right;
+  margin: 20px;
+}
+
+.headerDetails {
+  text-align: left;
+  margin: 10px 0px 0px 0px;
+  float: left;
+}
+
+.headerDetails p {
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.headerDetails a {
+  text-decoration: none;
+  font-size: 0.9em;
+  color: #444444;
+}
+
+.description {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+}
+
+.pedalboard-count-container {
+  vertical-align: middle;
+  width: 65px;
+  line-height: 10px;
+  text-align: center;
+  float: right;
+}
+
+.pedalboard-count {
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    line-height: 40px;
+    margin: 3px;
+    background-color: #883996;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.pedalboard-count:hover {
+  color: #ffffff;
+}
+
+.pedalboard-count-text {
+  font-size: 0.7em;
 }

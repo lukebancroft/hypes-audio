@@ -32,7 +32,7 @@ export default class Gallery extends React.Component {
                     <Col span={1}></Col>
                         {galleryItems.map(plugin => 
                             <Col className="gutter-row" span={6} offset={1} key={plugin.Name}>
-                                <Card className="pluginCard" hoverable
+                                <Card className="pluginCard" hoverable onClick={() => {this.props.goToDetails(plugin)}}
                                     title={plugin.Name}
                                     cover={<img src={plugin.ImageUrl} alt={plugin.Name}/>}
                                     actions={[<Button className="pluginCard-btn" type="danger" ghost>DETAILS</Button>]}>

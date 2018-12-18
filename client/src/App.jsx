@@ -1,92 +1,75 @@
 import React, { Component } from 'react';
-import NavMenu from './components/NavMenu';
-import ParametersTable from './components/ParametersTable';
-import Gallery from './components/Gallery';
-import firestore from "./firestore";
 import './assets/App.css';
+import firestore from "./firestore";
 import { Layout } from 'antd';
+import NavMenu from './components/NavMenu';
+import Gallery from './components/Gallery';
 import Login from './components/Login'
 import PluginGrid from './components/PluginGrid';
+import PluginDetails from './components/PluginDetails';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        currentPage: 'home'
+        currentPage: 'home',
+        details: []
     }
   }
 
   render() {
+    let pageContent;
     if (this.state.currentPage === 'home') {
-      return (
-        <div className="App">
-          <Layout>
-            <NavMenu 
-              currentPage = {this.state.currentPage}
-              menuMode = "horizontal"
-              handlePageChange = {this.handlePageChange.bind(this)}
-            />
-
-            <Layout className="layoutContent">
-              <Login/>
-            </Layout>
-          </Layout>
-        </div>
+      pageContent =(
+        <Layout className="layoutContent">
+          <Login/>
+        </Layout>
       );
     } else if (this.state.currentPage === 'gallery') {
-      return(
-        <div className="App">
-          <Layout>
-            <NavMenu 
-              currentPage = {this.state.currentPage}
-              menuMode = "horizontal"
-              handlePageChange = {this.handlePageChange.bind(this)}
-            />
-
-            <Layout className="dark-bg layoutContent">
-              <Gallery 
-                getFSdoc = {this.getFSdoc.bind(this)}
-                goToPage = {this.goToPage.bind(this)}
-              />
-            </Layout>
-          </Layout>
-        </div>
-      )
+      pageContent =(
+        <Layout className="dark-bg layoutContent">
+          <Gallery 
+            getFSdoc = {this.getFSdoc.bind(this)}
+            goToPage = {this.goToPage.bind(this)}
+            goToDetails = {this.goToDetails.bind(this)}
+          />
+        </Layout>
+      );
     } else if (this.state.currentPage === 'plugins') {
-      return(
-        <div className="App">
-          <Layout>
-            <NavMenu 
-              currentPage = {this.state.currentPage}
-              menuMode = "horizontal"
-              handlePageChange = {this.handlePageChange.bind(this)}
-            />
-
-            <Layout className="layoutContent"> 
+      pageContent =(
+        <Layout className="layoutContent"> 
               <PluginGrid 
                 getFSdoc = {this.getFSdoc.bind(this)}
+                goToDetails = {this.goToDetails.bind(this)}
               />
             </Layout>
-          </Layout>
-        </div>
-      )
+      );
     } else if (this.state.currentPage === 'pedalboards') {
-      return(
-        <div className="App">
+      pageContent =(
+        <h1>Page in construction</h1>
+      );
+    } else if (this.state.currentPage === 'pluginDetails') {
+      pageContent =(
+        <Layout className="layoutContent">
+              <PluginDetails 
+                plugin = {this.state.details}
+              />
+        </Layout>
+      );
+    }
+
+    return(
+      <div className="App">
           <Layout>
             <NavMenu 
               currentPage = {this.state.currentPage}
               menuMode = "horizontal"
               handlePageChange = {this.handlePageChange.bind(this)}
             />
-
-            <Layout className="layoutContent">
-              <ParametersTable />
-            </Layout>
+            {pageContent}
           </Layout>
-        </div>
-      )
-    }
+      </div>
+    )
   }
 
   handlePageChange = (e) => {
@@ -98,6 +81,12 @@ class App extends Component {
   goToPage(page) {
     this.setState({
       currentPage: page
+    });
+  }
+
+  goToDetails(plugin) {
+    this.setState({
+      currentPage: "pluginDetails", details: plugin
     });
   }
 

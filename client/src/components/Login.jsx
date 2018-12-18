@@ -1,6 +1,5 @@
 import React from 'react';
 import {Icon} from 'antd';
-import CreateAccount from './CreateAccout';
 import { auth, googleProvider, githubProvider, facebookProvider } from "../firestore";
 
 export default class Login extends React.Component {
@@ -44,7 +43,7 @@ export default class Login extends React.Component {
                 {this.state.user ?
                             <div>
                                 <button onClick={this.logout} className='user-profile btn'>
-                                    <img className='user-photo' src={this.state.user.photoURL} />
+                                    <img className='user-photo' src={this.state.user.photoURL} alt="User" />
                                     <div className="logout">LOGOUT</div>
                                 </button>
                             </div>               
