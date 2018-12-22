@@ -506,3 +506,15 @@ input[type=submit]:hover {
 .pedalboard-count-text {
   font-size: 0.7em;
 }
+
+.load-more-button {
+  position: fixed;
+  border-color: #883996;
+  background-color: #883996;
+  color: #ffffff;
+}
+
+.load-more-button:hover {
+  border-color: #883996;
+  background-color: #883996;
+}

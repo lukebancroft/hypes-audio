@@ -10,7 +10,6 @@ export default class Gallery extends React.Component {
       }
     }
 
-
     componentDidMount() {
         const self = this;
         //this.enableLoader();

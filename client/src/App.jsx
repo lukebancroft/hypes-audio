@@ -39,7 +39,7 @@ class App extends Component {
       pageContent =(
         <Layout className="layoutContent"> 
               <PluginGrid 
-                getFSdoc = {this.getFSdoc.bind(this)}
+                getPaginatedFSdoc = {this.getPaginatedFSdoc.bind(this)}
                 goToDetails = {this.goToDetails.bind(this)}
               />
             </Layout>
@@ -126,6 +126,48 @@ class App extends Component {
               })
             }
           })
+      }).catch(function(error) {
+          console.log("Error getting collection:", error);
+      });
+    }
+  }
+
+  getPaginatedFSdoc(collection, filterColumn, filterValue, nbOfDocs, startAt, callback) {
+    let pluginArr = [];
+    var pluginRef = firestore.collection(collection);
+
+    if (!startAt) {
+      pluginRef.where(filterColumn, '==', filterValue).orderBy("Comment", "asc").limit(nbOfDocs).get().then(pluginsData => {
+        pluginsData.forEach(plugin => {
+          if (plugin.exists) {
+            pluginRef.doc(plugin.id).get().then(doc => {
+              let data = doc.data();
+              data.id = plugin.id;
+              pluginArr.push(data);
+              if (pluginArr.length === pluginsData.size) {
+                callback(pluginArr);
+              }
+            });
+          }
+        });
+      }).catch(function(error) {
+          console.log("Error getting collection:", error);
+      });
+    }
+    else {
+      pluginRef.where(filterColumn, '==', filterValue).orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
+        pluginsData.forEach(plugin => {
+          if (plugin.exists) {
+            pluginRef.doc(plugin.id).get().then(doc => {
+              let data = doc.data();
+              data.id = plugin.id;
+              pluginArr.push(data);
+              if (pluginArr.length === pluginsData.size) {
+                callback(pluginArr);
+              }
+            });
+          }
+        });
       }).catch(function(error) {
           console.log("Error getting collection:", error);
       });

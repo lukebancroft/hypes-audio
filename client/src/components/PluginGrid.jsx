@@ -10,22 +10,33 @@ export default class PluginGrid extends React.Component {
       super(props);
       this.state = {
           plugins: [],
-          loadedImages: 0
+          loadedImages: 0,
+          pluginsPerPage: 5
       }
 
       this.enableLoader = this.enableLoader.bind(this);
       this.disableLoader = this.disableLoader.bind(this);
       this.imageCount = this.imageCount.bind(this);
+      this.loadMore = this.loadMore.bind(this);
+      this.tryDisableLoadMore = this.tryDisableLoadMore.bind(this);
     }
 
     componentDidMount() {
         const self = this;
         this.enableLoader();
-        this.props.getFSdoc("plugins", "Collection", "shop", function(plugins) {
+        this.props.getPaginatedFSdoc("plugins", "Collection", "shop", this.state.pluginsPerPage, null, function(plugins) {
             self.setState({ plugins: plugins });
         })
     }
 
+    loadMore() {
+        const self = this;
+        this.props.getPaginatedFSdoc("plugins", "Collection", "shop", (this.state.pluginsPerPage + 1), this.state.plugins[this.state.plugins.length - 1].Comment, function(plugins) {
+            plugins.shift();
+            self.setState({ plugins: [...self.state.plugins, ...plugins] });
+            self.tryDisableLoadMore();
+        })
+    }
 
     enableLoader() {
         document.getElementById("loader").style.display = "block";
@@ -47,6 +58,12 @@ export default class PluginGrid extends React.Component {
                 this.disableLoader();
             }
         });
+    }
+
+    tryDisableLoadMore() {
+        if (this.state.plugins.length % this.state.pluginsPerPage !== 0) {
+            document.getElementsByClassName("load-more-button")[0].style.display = "none";
+        }
     }
 
   render() {
@@ -79,7 +96,7 @@ export default class PluginGrid extends React.Component {
                                         <img src={plugin.ImageUrl} alt={plugin.Name} onLoad={this.imageCount}></img>
                                     </a>
                                     <div className="tagContainer">
-                                        {Array.from(plugin.Tags).map(tag => 
+                                        {plugin.Tags.map(tag => 
                                             <a key={plugin.Name + "_" + tag} className="pluginTag">{tag}</a>
                                         )}
                                     </div>
@@ -93,6 +110,9 @@ export default class PluginGrid extends React.Component {
                         </Masonry>
                     </Col>
                 </Row>
+                <Row>
+                    <button className="load-more-button" onClick={() => {this.loadMore()}}>LOAD MORE</button>    
+                </Row>        
             </div>
         </div>
     );
