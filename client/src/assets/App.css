@@ -507,11 +507,23 @@ input[type=submit]:hover {
   font-size: 0.7em;
 }
 
-.load-more-button {
+.load-more-row {
+  height: 100px;
+  line-height: 100px;
+  bottom: 0;
+  margin-top: 20px;
+  width: 100%;
   position: fixed;
+
+  display: block;
+}
+
+.load-more-button {
   border-color: #883996;
   background-color: #883996;
   color: #ffffff;
+  line-height: 30px;
+  width: 400px;
 }
 
 .load-more-button:hover {

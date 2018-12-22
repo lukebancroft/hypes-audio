@@ -32,9 +32,10 @@ export default class PluginGrid extends React.Component {
     loadMore() {
         const self = this;
         this.props.getPaginatedFSdoc("plugins", "Collection", "shop", (this.state.pluginsPerPage + 1), this.state.plugins[this.state.plugins.length - 1].Comment, function(plugins) {
+            let pluginsBeforeUpdate = self.state.plugins.length;
             plugins.shift();
             self.setState({ plugins: [...self.state.plugins, ...plugins] });
-            self.tryDisableLoadMore();
+            self.tryDisableLoadMore(pluginsBeforeUpdate);
         })
     }
 
@@ -60,8 +61,8 @@ export default class PluginGrid extends React.Component {
         });
     }
 
-    tryDisableLoadMore() {
-        if (this.state.plugins.length % this.state.pluginsPerPage !== 0) {
+    tryDisableLoadMore(nbOfPlugins) {
+        if (this.state.plugins.length % this.state.pluginsPerPage !== 0 || this.state.plugins.length == nbOfPlugins) {
             document.getElementsByClassName("load-more-button")[0].style.display = "none";
         }
     }
@@ -110,7 +111,7 @@ export default class PluginGrid extends React.Component {
                         </Masonry>
                     </Col>
                 </Row>
-                <Row>
+                <Row className="load-more-row">
                     <button className="load-more-button" onClick={() => {this.loadMore()}}>LOAD MORE</button>    
                 </Row>        
             </div>
