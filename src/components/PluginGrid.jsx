@@ -62,7 +62,7 @@ export default class PluginGrid extends React.Component {
     }
 
     tryDisableLoadMore(nbOfPlugins) {
-        if (this.state.plugins.length % this.state.pluginsPerPage !== 0 || this.state.plugins.length == nbOfPlugins) {
+        if (this.state.plugins.length % this.state.pluginsPerPage !== 0 || this.state.plugins.length === nbOfPlugins) {
             document.getElementsByClassName("load-more-button")[0].style.display = "none";
         }
     }

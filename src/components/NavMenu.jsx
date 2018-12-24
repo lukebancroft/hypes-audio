@@ -25,6 +25,9 @@ export default class NavMenu extends React.Component {
             <Menu.Item key="pedalboards">
                 <Icon type="api" />Pedalboards
             </Menu.Item>
+            <Menu.Item key="account">
+                <Icon type="user" />Account
+            </Menu.Item>
         </Menu>
     );
   }

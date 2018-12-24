@@ -1,45 +1,94 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Tag, Button } from 'antd';
 
 export default class ParametersTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            columns: [],
-            data: []
+          plugins: [],
+          data: []
         }
+        
+        this.makeRows = this.makeRows.bind(this);
     }
 
     componentDidMount() {
-      let columnsContent = [];
+      const self = this;
+        this.props.getFSdoc("plugins", null, null, function(plugins) {
+            self.setState({ plugins: plugins }, () => {
+              self.makeRows();
+            });
+        })
+    }
+
+    makeRows() {
+      let iterator = 0;
       let dataContent = [];
 
-      if (this.props.headers.length > 0 && this.props.data.length > 0) {
-        for (let i = 0; i < this.props.headers.length; i++) {
-          let header = this.props.headers[i].toString();
-          columnsContent.push({
-            title: header,
-            dataIndex: header,
-            key: header
-          });
-        }
-  
-        for (let j = 0; j < this.props.data[0].length; j++) {
-          dataContent.push({'key': j});
-          for (let k = 0; k < columnsContent.length; k++) {
-            dataContent[j][columnsContent[k].title] = this.props.data[k][j]
+      this.state.plugins.map( plugin => {
+        dataContent.push(
+          {
+            'key': iterator,
+            'name': plugin.Name,
+            'comment': plugin.Comment,
+            'url': plugin.url,
+            'tags': plugin.Tags,
+            'image': 'img',
+            'actions': ['Edit', 'Delete']
           }
-        }
-  
-        this.setState({
-          columns: columnsContent, data: dataContent
-        });
-      }
+        );
+        iterator++;
+      })
+      this.setState({ data: dataContent });
     }
 
   render() {
+    const columns = [{
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      fixed: 'left',
+      width: 100
+    }, {
+      title: 'Comment (Scroll right for more)',
+      dataIndex: 'comment',
+      key: 'comment',
+      width: 1000
+    }, {
+      title: 'URL',
+      dataIndex: 'url',
+      key: 'url',
+      width: 300
+    }, {
+      title: 'Tags',
+      dataIndex: 'tags',
+      key: 'tags',
+      width: 300,
+      render: tags => (
+        <span>
+          {tags.map(tag => <Tag color="purple" key={tag + Math.random()}>{tag}</Tag>)}
+        </span>
+      )
+    }, {
+      title: 'Image',
+      dataIndex: 'image',
+      key: 'image',
+      width: 300
+    }, {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      fixed: 'right',
+      width: 150,
+      render: actions => (
+        <span>
+          {actions.map(action => <Button icon={action.toLowerCase()}>{action}</Button>)}
+        </span>
+      )
+    }];
+
     return (
-        <Table columns={this.state.columns} dataSource={this.state.data} pagination={false} />
+        <Table columns={columns} dataSource={this.state.data} pagination={false} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 10}} scroll={{ x: 1900 }} title={() => 'Your plugins'} />
     );
   }
 }

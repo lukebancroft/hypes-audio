@@ -7,6 +7,7 @@ import Gallery from './components/Gallery';
 import Login from './components/Login'
 import PluginGrid from './components/PluginGrid';
 import PluginDetails from './components/PluginDetails';
+import AccountManager from './components/AccountManager';
 
 class App extends Component {
   constructor(props) {
@@ -47,6 +48,12 @@ class App extends Component {
     } else if (this.state.currentPage === 'pedalboards') {
       pageContent =(
         <h1>Page in construction</h1>
+      );
+    } else if (this.state.currentPage === 'account') {
+      pageContent =(
+        <AccountManager 
+          getFSdoc = {this.getFSdoc.bind(this)}
+        />
       );
     } else if (this.state.currentPage === 'pluginDetails') {
       pageContent =(
