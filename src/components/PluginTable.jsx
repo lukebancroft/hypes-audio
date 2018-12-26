@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table, Tag, Button, Modal } from 'antd';
+import { Table, Tag, Button, Modal, Input, Icon, Form, Upload } from 'antd';
+import EditCreatePluginFieldset from './EditCreatePluginFieldset';
 
 export default class ParametersTable extends React.Component {
     constructor(props) {
@@ -7,8 +8,9 @@ export default class ParametersTable extends React.Component {
         this.state = {
           plugins: [],
           data: [],
-          editModalVisible: false,
+          editCreateModalVisible: false,
           deleteModalVisible: false,
+          modalType: '',
           confirmLoading: false,
           currentPlugin: []
         }
@@ -38,7 +40,7 @@ export default class ParametersTable extends React.Component {
             'comment': plugin.Comment,
             'url': plugin.url,
             'tags': plugin.Tags,
-            'image': 'img',
+            'image': plugin.ImageUrl,
             'actions': ['Edit', 'Delete']
           }
         );
@@ -49,23 +51,35 @@ export default class ParametersTable extends React.Component {
     editPlugin(plugin) {
       console.log(plugin);
       this.setState({
-        currentPlugin: plugin, editModalVisible: true
+        currentPlugin: plugin, editCreateModalVisible: true, modalType: 'Edit'
+      });
+    }
+
+    createPlugin() {
+      this.setState({
+        editCreateModalVisible: true, modalType: 'Create'
       });
     }
 
     deletePlugin(plugin) {
       console.log(plugin);
       const self = this;
-      Modal.confirm({
-        title: 'Supprimer le plugin',
-        content: 'Êtes-vous sûr de vouloir supprimer ' + plugin.name + ' ?',
-        okText: 'Oui',
-        okType: 'danger',
-        cancelText: 'Non',
-        confirmLoading: self.state.confirmLoading,
-        onOk() {self.handleDelete();},
-        onCancel() {self.handleCancel();}
+
+      this.setState({
+        currentPlugin: plugin
+      }, () => {
+        Modal.confirm({
+          title: 'Delete plugin',
+          content: 'Are you sure you want to delete ' + this.state.currentPlugin.name + ' ?',
+          okText: 'Yes',
+          okType: 'danger',
+          cancelText: 'No',
+          confirmLoading: self.state.confirmLoading,
+          onOk() {self.handleDelete();},
+          onCancel() {self.handleCancel();}
+        });
       });
+      
     }
 
     handleEdit = () => {
@@ -74,7 +88,19 @@ export default class ParametersTable extends React.Component {
       });
       setTimeout(() => {
         this.setState({
-          editModalVisible: false,
+          editCreateModalVisible: false,
+          confirmLoading: false,
+        });
+      }, 2000);
+    }
+
+    handleCreate = () => {
+      this.setState({
+        confirmLoading: true,
+      });
+      setTimeout(() => {
+        this.setState({
+          editCreateModalVisible: false,
           confirmLoading: false,
         });
       }, 2000);
@@ -94,7 +120,7 @@ export default class ParametersTable extends React.Component {
   
     handleCancel = () => {
       this.setState({
-        deleteModalVisible: false, editModalVisible: false
+        deleteModalVisible: false, editCreateModalVisible: false
       });
     }
 
@@ -111,7 +137,7 @@ export default class ParametersTable extends React.Component {
       title: 'Comment (Scroll right for more)',
       dataIndex: 'comment',
       key: 'comment',
-      width: 1000
+      width: 900
     }, {
       title: 'URL',
       dataIndex: 'url',
@@ -131,7 +157,10 @@ export default class ParametersTable extends React.Component {
       title: 'Image',
       dataIndex: 'image',
       key: 'image',
-      width: 300
+      width: 300,
+      render: (image, record) => (
+        <img src={image} alt={record.name} className="tableImage" ></img>
+      )
     }, {
       title: 'Actions',
       dataIndex: 'actions',
@@ -140,23 +169,32 @@ export default class ParametersTable extends React.Component {
       width: 150,
       render: (actions, record) => (
         <span>
-          {actions.map((action) => <Button icon={action.toLowerCase()} onClick={() => {this[action.toLowerCase() + pluginLabel](record)}}>{action}</Button>)}
+          {actions.map((action) => <Button icon={action.toLowerCase()} key={record.id + "_" + action + "_button"} className="actionButton" onClick={() => {this[action.toLowerCase() + pluginLabel](record)}} >{action}</Button>)}
         </span>
       )
     }];
 
+    const EditCreateForm = Form.create()(EditCreatePluginFieldset);
+
     return (
       <div>
-        <Table columns={columns} dataSource={this.state.data} pagination={false} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 10}} scroll={{ x: 1900 }} title={() => 'Your plugins'} />
+        <Button icon='cloud-upload' className='uploadButton' onClick={() => {this.createPlugin()}} >Upload a new plugin</Button>
+
+        <Table columns={columns} dataSource={this.state.data} pagination={false} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 10}} scroll={{ x: 1800 }} title={() => 'Your plugins'} />
         
         <Modal
-          title="Editer le plugin"
-          visible={this.state.editModalVisible}
+          title="Edit plugin"
+          visible={this.state.editCreateModalVisible}
           onOk={this.handleEdit}
+          okText={this.state.modalType}
           confirmLoading={this.state.confirmLoading}
           onCancel={this.handleCancel}
-        >
-          <p>{this.state.currentPlugin.name}</p>
+          >
+
+          <EditCreateForm 
+            currentPlugin={this.state.currentPlugin}
+          />
+
         </Modal>
 
       </div>
