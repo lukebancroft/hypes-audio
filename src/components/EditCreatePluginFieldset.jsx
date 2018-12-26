@@ -1,5 +1,7 @@
 import React from 'react';
-import { Input, Icon, Form, Upload } from 'antd';
+import { Input, Icon, Form, Upload, Select } from 'antd';
+const { TextArea } = Input;
+const Option = Select.Option;
 
 export default class EditCreatePluginFieldset extends React.Component {
     constructor(props) {
@@ -31,8 +33,34 @@ export default class EditCreatePluginFieldset extends React.Component {
                 rules: [{ required: true, message: 'Please input a description for the plugin!' }],
                 initialValue: this.props.currentPlugin.comment
               })(
-                <Input rows={4} placeholder='Enter plugin description' />
+                <TextArea rows={4} placeholder='Enter plugin description' />
               )}
+            </Form.Item>
+            <Form.Item
+                label="Select tags"
+                >
+                {getFieldDecorator('select-multiple', {
+                    rules: [
+                    { required: true, message: 'Please select at least one tag!', type: 'array' },
+                    ],
+                })(
+                    <Select mode="multiple" placeholder="Please select up to 2 tags">
+                        <Option value="filter">Filter</Option>
+                        <Option value="phaser">Phaser</Option>
+                        <Option value="modulator">Modulator</Option>
+                        <Option value="instrument">Instrument</Option>
+                        <Option value="amplifier">Amplifier</Option>
+                        <Option value="dynamics">Dynamics</Option>
+                        <Option value="compressor">Compressor</Option>
+                        <Option value="delay">Delay</Option>
+                        <Option value="simulator">Simulator</Option>
+                        <Option value="utility">Utility</Option>
+                        <Option value="midi">MIDI</Option>
+                        <Option value="spectral">Spectral</Option>
+                        <Option value="pitch_shifter">Pitch Shifter</Option>
+                        <Option value="reverb">Reverb</Option>
+                    </Select>
+                )}
             </Form.Item>
             <Form.Item label="Url">
               {getFieldDecorator('url', {

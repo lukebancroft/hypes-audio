@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Tag, Button, Modal, Input, Icon, Form, Upload } from 'antd';
+import firestore from "../firestore";
 import EditCreatePluginFieldset from './EditCreatePluginFieldset';
 
 export default class ParametersTable extends React.Component {
@@ -57,7 +58,7 @@ export default class ParametersTable extends React.Component {
 
     createPlugin() {
       this.setState({
-        editCreateModalVisible: true, modalType: 'Create'
+        currentPlugin: [], editCreateModalVisible: true, modalType: 'Create'
       });
     }
 
@@ -97,13 +98,23 @@ export default class ParametersTable extends React.Component {
     handleCreate = () => {
       this.setState({
         confirmLoading: true,
-      });
-      setTimeout(() => {
-        this.setState({
-          editCreateModalVisible: false,
-          confirmLoading: false,
+      }, () => {
+        firestore.collection('plugins').add({
+          Name: 'New',
+          Comment: 'This is a new plugin',
+          Tags: ['Filter', 'Instrument'],
+          ImageUrl: 'https://firebasestorage.googleapis.com/v0/b/hypes-audio.appspot.com/o/plugin_images%2FGxDuck_Delay.png?alt=media&token=d34dbe3a-0148-4518-84b0-4b409935754d',
+          url: 'www.hypesaudio.com',
+          Creator: 'Luke Bancroft-Richardson',
+          collection: 'shop'
+        }).then(ref => {
+          console.log('Added plugin with ID: ', ref.id);
+          this.setState({
+            editCreateModalVisible: false,
+            confirmLoading: false,
+          });
         });
-      }, 2000);
+      });
     }
 
     handleDelete = () => {
