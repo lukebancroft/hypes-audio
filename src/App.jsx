@@ -15,7 +15,7 @@ class App extends Component {
     this.state = {
         currentPage: 'home',
         details: [],
-        user: null
+        isLogged: false
     }
   }
 
@@ -25,7 +25,6 @@ class App extends Component {
       pageContent =(
         <Layout className="layoutContent">
           <Login
-            user = {this.props.user}
             handleUserChange = {this.handleUserChange.bind(this)}
           />
         </Layout>
@@ -49,15 +48,13 @@ class App extends Component {
               />
             </Layout>
       );
-    } else if (this.state.currentPage === 'pedalboards') {
-      pageContent =(
-        <h1>Page in construction</h1>
-      );
     } else if (this.state.currentPage === 'account') {
       pageContent =(
-        <AccountManager 
-          getFSdoc = {this.getFSdoc.bind(this)}
-        />
+        <Layout className="layoutContent">
+          <AccountManager 
+            getFSdoc = {this.getFSdoc.bind(this)}
+          />
+        </Layout>
       );
     } else if (this.state.currentPage === 'pluginDetails') {
       pageContent =(
@@ -75,8 +72,8 @@ class App extends Component {
             <NavMenu 
               currentPage = {this.state.currentPage}
               menuMode = "horizontal"
+              isLogged = {this.state.isLogged}
               handlePageChange = {this.handlePageChange.bind(this)}
-              user = {this.state.user}
             />
             {pageContent}
           </Layout>
@@ -84,9 +81,9 @@ class App extends Component {
     )
   }
 
-  handleUserChange(loggedUser){
+  handleUserChange(logStatus){
     this.setState({
-      user: loggedUser
+      isLogged: logStatus
     });
   }
 

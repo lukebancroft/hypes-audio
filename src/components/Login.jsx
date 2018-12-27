@@ -7,10 +7,10 @@ export default class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPage: 'login',
+            authContent: 'login',
             email: '',
             password: '',
-            user: this.props.user
+            user: null
         }
         this.handleChange = this.handleChange.bind(this);
 
@@ -27,8 +27,10 @@ export default class Login extends React.Component {
         auth.onAuthStateChanged((user) => {
           if (user) {
             this.setState({ user });
-            this.props.handleUserChange(user);
-          } 
+            this.props.handleUserChange(true)
+          } else {
+            this.props.handleUserChange(false)
+          }
         });
     }
 
@@ -37,13 +39,13 @@ export default class Login extends React.Component {
     }
 
     render() {
-        if (this.state.currentPage === 'login') {
+        if (this.state.authContent === 'login') {
             return (
                 <div className='app'>
                 <div className="container">
                 {this.state.user ?
                             <div>
-                                <p style={{textAlign: 'center'}}>Bienvenu {this.state.user.email} !</p>
+                                <p style={{textAlign: 'center'}}>Welcome back, {this.state.user.displayName ? this.state.user.displayName : this.state.user.email} !</p>
                                 <button onClick={this.logout} className='user-profile btn'>
                                     <img className='user-photo' src={this.state.user.photoURL} alt="User" />
                                     <div className="logout">LOGOUT</div>
@@ -65,11 +67,11 @@ export default class Login extends React.Component {
                                     <Icon type="github"/> Login with Github
                                 </button>
                                 <button onClick={this.loginWithGoogle} className="google btn">
-                                    <Icon type="google"/> Login with Google+
+                                    <Icon type="google"/> Login with Google
                                 </button>
                             </div>
 
-                            <div className="col">
+                            <div className="col accountInputs">
                                 <div className="hide-md-lg">
                                     <p>Or sign in manually:</p>
                                 </div>
@@ -86,7 +88,7 @@ export default class Login extends React.Component {
                 <div className="bottom-container">
                     <div className="row">
                         
-                            <button name='currentPage' value='create' onClick={this.handleChange} style={{color:"white", width: "40%"}} className="btn bottom-container">Sign up</button>
+                            <button name='authContent' value='create' onClick={this.handleChange} style={{color:"white", width: "40%"}} className="btn bottom-container">Sign up</button>
                         
                     </div>
                 </div>
@@ -94,33 +96,32 @@ export default class Login extends React.Component {
                 </div>
             );
         }
-        else if (this.state.currentPage === 'create') {
+        else if (this.state.authContent === 'create') {
             return(
                 <div className='app'>
-                <div className="container">
-                    <form onSubmit={this.createEmailAndPassword}>
-                        <div className="row">
-                            <h2 style={{textAlign:"center"}}>Create an Account Manually</h2>
-                            
+                    <div className="container">
+                        <form onSubmit={this.createEmailAndPassword}>
+                            <div className="row accountInputs">
+                                <h2 style={{textAlign:"center"}}>Create an Account Manually</h2>
+                                
                                 <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} style={{width: "40%"}} required/><br/>
                                 <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} style={{width: "40%"}} required/><br/>
                                 <input type="submit" value="Create Account" style={{width: "40%"}}/>
+                                
+                            </div>
+                        </form>
+                    </div>
+
+                    <div className="bottom-container">
+                        <div className="row">
+                            
+                                <button name='authContent' value='login' onClick={this.handleChange} style={{color:"white", width: "40%"}} className="btn bottom-container">Sign in</button>
                             
                         </div>
-                    </form>
-                </div>
-
-                <div className="bottom-container">
-                    <div className="row">
-                        
-                            <button name='currentPage' value='login' onClick={this.handleChange} style={{color:"white", width: "40%"}} className="btn bottom-container">Sign in</button>
-                        
                     </div>
-                </div>
                 </div>
             );
         }
-        else { return(<div></div>)}
     }
 
     logout() {
@@ -131,8 +132,6 @@ export default class Login extends React.Component {
                 password: '',
                 user: null
             });
-            this.props.handleUserChange(null);
-            alert("Logout");
         });
     }
 
@@ -144,8 +143,6 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
-            this.props.handleUserChange(user);            
-            alert("Login Success");
         });
     }
 
@@ -156,8 +153,6 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
-            this.props.handleUserChange(user);
-            alert("Login Success");
         });
     }
 
@@ -168,8 +163,6 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
-            this.props.handleUserChange(user);
-            alert("Login Success");
         });
     }
 
@@ -180,8 +173,6 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
-            this.props.handleUserChange(user);
-            alert("Login Success");
         });
     }
 
@@ -193,10 +184,8 @@ export default class Login extends React.Component {
                 user: null,
                 email: '',
                 password: '',
-                currentPage: 'login'
+                authContent: 'login'
             });
-            this.props.handleUserChange(null);
-            alert("Creation Success");
         });
     }
 }

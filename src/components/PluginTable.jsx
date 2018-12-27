@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Tag, Button, Modal, Input, Icon, Form, Upload } from 'antd';
 import firestore from "../firestore";
+import {auth} from "../firestore";
 import EditCreatePluginFieldset from './EditCreatePluginFieldset';
 
 export default class PluginTable extends React.Component {
@@ -30,7 +31,8 @@ export default class PluginTable extends React.Component {
 
     componentDidMount() {
       const self = this;
-        this.props.getFSdoc("plugins", null, null, function(plugins) {
+      let username = auth.currentUser.displayName ? auth.currentUser.displayName : auth.currentUser.email;
+        this.props.getFSdoc("plugins", "Creator", username, function(plugins) {
             self.setState({ plugins: plugins }, () => {
               self.makeRows();
             });
@@ -127,13 +129,14 @@ export default class PluginTable extends React.Component {
       this.setState({
         confirmLoading: true,
       }, () => {
+        let username = auth.currentUser.displayName ? auth.currentUser.displayName : auth.currentUser.email;
         firestore.collection('plugins').add({
           Name: this.state.formValues.name,
           Comment: this.state.formValues.description,
-          Tags: this.state.formValues['select-multiple'],
+          Tags: this.state.formValues.tags,
           ImageUrl: 'https://firebasestorage.googleapis.com/v0/b/hypes-audio.appspot.com/o/plugin_images%2FGxDuck_Delay.png?alt=media&token=d34dbe3a-0148-4518-84b0-4b409935754d',
           url: this.state.formValues.url,
-          Creator: 'Luke Bancroft-Richardson',
+          Creator: username,
           collection: 'shop'
         }).then(ref => {
           console.log('Added plugin with ID: ', ref.id);
