@@ -59,14 +59,12 @@ export default class PluginTable extends React.Component {
     }
 
     editPlugin(plugin) {
-      console.log(plugin);
-      firestore.collection('plugins').doc(plugin.key).get()
-      .then(doc => {
-        console.log(doc.data());
-        this.setState({
-          currentPlugin: doc.data(), editCreateModalVisible: true, modalType: 'Edit'
-        });
+      let current = this.state.plugins.find(doc => {
+        return doc.id === plugin.key;
       })
+      this.setState({
+          currentPlugin: current, editCreateModalVisible: true, modalType: 'Edit'
+      });
     }
 
     createPlugin() {
@@ -76,7 +74,6 @@ export default class PluginTable extends React.Component {
     }
 
     deletePlugin(plugin) {
-      console.log(plugin);
       const self = this;
 
       this.setState({
@@ -100,7 +97,6 @@ export default class PluginTable extends React.Component {
       this.setState({
         formValues: values
       }, () => {
-        console.log(this.state.formValues);
         if (this.state.modalType === 'Edit') {
           this.handleEdit();
         }
@@ -118,11 +114,11 @@ export default class PluginTable extends React.Component {
           Name: this.state.formValues.name,
           Comment: this.state.formValues.description,
           Tags: this.state.formValues.tags,
-          ImageUrl: this.state.currentPlugin.image,
+          ImageUrl: this.state.currentPlugin.ImageUrl,
           url: this.state.formValues.url
         }).then( ref => {
           this.setState({
-            deleteModalVisible: false,
+            editCreateModalVisible: false,
             confirmLoading: false,
           });
         })

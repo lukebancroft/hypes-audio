@@ -58,8 +58,7 @@ export default class EditCreatePluginFieldset extends React.Component {
 
     getFieldDecorator('keys', { initialValue: (this.props.currentPlugin.Control ? this.props.currentPlugin.Control : 0) });
     const keys = getFieldValue('keys');
-    console.log(keys);
-    const parameterItems = keys.map((k, index) => (
+    const parameterItems = this.props.currentPlugin.Control ? (keys.map((k, index) => (
         <div key={k}>
             <Form.Item
                 label={index === 0 ? 'Parameters' : ''}
@@ -123,7 +122,7 @@ export default class EditCreatePluginFieldset extends React.Component {
             </InputGroup>
             </Form.Item>
         </div>
-    ));
+    ))) : null;
 
     return (
         <Form layout="vertical" onSubmit={this.handleSubmit} id="editCreateForm">

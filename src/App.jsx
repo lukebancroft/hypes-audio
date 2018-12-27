@@ -44,6 +44,7 @@ class App extends Component {
         <Layout className="layoutContent"> 
               <PluginGrid 
                 getPaginatedFSdoc = {this.getPaginatedFSdoc.bind(this)}
+                getPaginatedFSdocByTagAndOrName = {this.getPaginatedFSdocByTagAndOrName.bind(this)}
                 goToDetails = {this.goToDetails.bind(this)}
               />
             </Layout>
@@ -151,8 +152,30 @@ class App extends Component {
     let pluginArr = [];
     var pluginRef = firestore.collection(collection);
 
-    if (!startAt) {
-      pluginRef.where(filterColumn, '==', filterValue).orderBy("Comment", "asc").limit(nbOfDocs).get().then(pluginsData => {
+      pluginRef.where(filterColumn, '==', filterValue).orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
+        pluginsData.forEach(plugin => {
+          if (plugin.exists) {
+            pluginRef.doc(plugin.id).get().then(doc => {
+              let data = doc.data();
+              data.id = plugin.id;
+              pluginArr.push(data);
+              if (pluginArr.length === pluginsData.size) {
+                callback(pluginArr);
+              }
+            });
+          }
+        });
+      }).catch(function(error) {
+          console.log("Error getting collection:", error);
+      });
+  }
+
+  getPaginatedFSdocByTagAndOrName(collection, filterColumn, filterValue, tag, name, nbOfDocs, startAt, callback) {
+    let pluginArr = [];
+    var pluginRef = firestore.collection(collection);
+
+    if (tag !== '' && name === '') {
+      pluginRef.where(filterColumn, '==', filterValue).where('Tags', 'array-contains', tag).orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
         pluginsData.forEach(plugin => {
           if (plugin.exists) {
             pluginRef.doc(plugin.id).get().then(doc => {
@@ -169,8 +192,26 @@ class App extends Component {
           console.log("Error getting collection:", error);
       });
     }
-    else {
-      pluginRef.where(filterColumn, '==', filterValue).orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
+    else if (tag === '' && name !== '') {
+      pluginRef.where(filterColumn, '==', filterValue).orderBy('Name').startAt(name).endAt(name+'\uf8ff').orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
+        pluginsData.forEach(plugin => {
+          if (plugin.exists) {
+            pluginRef.doc(plugin.id).get().then(doc => {
+              let data = doc.data();
+              data.id = plugin.id;
+              pluginArr.push(data);
+              if (pluginArr.length === pluginsData.size) {
+                callback(pluginArr);
+              }
+            });
+          }
+        });
+      }).catch(function(error) {
+          console.log("Error getting collection:", error);
+      });
+    }
+    else if (tag !== '' && name !== '') {
+      pluginRef.where(filterColumn, '==', filterValue).where('Tags', 'array-contains', tag).orderBy('Name').startAt(name).endAt(name+'\uf8ff').orderBy("Comment", "asc").limit(nbOfDocs).startAt(startAt).get().then(pluginsData => {
         pluginsData.forEach(plugin => {
           if (plugin.exists) {
             pluginRef.doc(plugin.id).get().then(doc => {

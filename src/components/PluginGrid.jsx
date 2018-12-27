@@ -11,7 +11,9 @@ export default class PluginGrid extends React.Component {
       this.state = {
           plugins: [],
           loadedImages: 0,
-          pluginsPerPage: 5
+          pluginsPerPage: 5,
+          searchTag: '',
+          searchName: ''
       }
 
       this.enableLoader = this.enableLoader.bind(this);
@@ -19,38 +21,53 @@ export default class PluginGrid extends React.Component {
       this.imageCount = this.imageCount.bind(this);
       this.loadMore = this.loadMore.bind(this);
       this.tryDisableLoadMore = this.tryDisableLoadMore.bind(this);
+      this.searchFor = this.searchFor.bind(this);
+      this.filterByTag = this.filterByTag.bind(this);
     }
 
     componentDidMount() {
         const self = this;
         this.enableLoader();
-        this.props.getPaginatedFSdoc("plugins", "Collection", "shop", this.state.pluginsPerPage, null, function(plugins) {
-            self.setState({ plugins: plugins });
-        })
+        if (this.state.searchName === '' || this.state.searchTag === '') {
+            this.props.getPaginatedFSdoc("plugins", "Collection", "shop", this.state.pluginsPerPage, null, function(plugins) {
+                self.setState({ plugins: plugins });
+            })
+        }
+        else {
+            this.props.getPaginatedFSdocByTagAndOrName("plugins", "Collection", "shop", this.state.searchTag, this.state.searchName, this.state.pluginsPerPage, null, function(plugins) {
+                self.setState({ plugins: plugins });
+            })
+        }
     }
 
     loadMore() {
         const self = this;
-        this.props.getPaginatedFSdoc("plugins", "Collection", "shop", (this.state.pluginsPerPage + 1), this.state.plugins[this.state.plugins.length - 1].Comment, function(plugins) {
-            let pluginsBeforeUpdate = self.state.plugins.length;
-            plugins.shift();
-            self.setState({ plugins: [...self.state.plugins, ...plugins] });
-            self.tryDisableLoadMore(pluginsBeforeUpdate);
-        })
+
+        if (this.state.searchName === '' || this.state.searchTag === '') {
+            this.props.getPaginatedFSdoc("plugins", "Collection", "shop", (this.state.pluginsPerPage + 1), this.state.plugins[this.state.plugins.length - 1].Comment, function(plugins) {
+                let pluginsBeforeUpdate = self.state.plugins.length;
+                plugins.shift();
+                self.setState({ plugins: [...self.state.plugins, ...plugins] });
+                self.tryDisableLoadMore(pluginsBeforeUpdate);
+            })
+        } else {
+            this.props.getPaginatedFSdocByTagAndOrName("plugins", "Collection", "shop", this.state.searchTag, this.state.searchName, (this.state.pluginsPerPage + 1), this.state.plugins[this.state.plugins.length - 1].Comment, function(plugins) {
+                let pluginsBeforeUpdate = self.state.plugins.length;
+                plugins.shift();
+                self.setState({ plugins: [...self.state.plugins, ...plugins] });
+                self.tryDisableLoadMore(pluginsBeforeUpdate);
+            })
+        }
     }
 
     enableLoader() {
         document.getElementById("loader").style.display = "block";
         document.getElementById("stack").style.visibility = "hidden";
-        //document.getElementById("menu-content").style.pointerEvents = "none";
-        //document.getElementById("filter-group").style.pointerEvents = "none";
     }
     
     disableLoader() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("stack").style.visibility = "unset";
-        //document.getElementById("menu-content").style.pointerEvents = "all";
-        //document.getElementById("filter-group").style.pointerEvents = "all";
     }
 
     imageCount() {
@@ -67,6 +84,16 @@ export default class PluginGrid extends React.Component {
         }
     }
 
+    searchFor(searchTerm) {
+        console.log(searchTerm);
+        this.setState({ searchName: searchTerm });
+    }
+
+    filterByTag(tag) {
+        console.log(tag);
+        this.setState({ searchTag: tag });
+    }
+
   render() {
     
     return (
@@ -78,7 +105,8 @@ export default class PluginGrid extends React.Component {
                 <Col span={12} offset={6}>
                     <Search
                         placeholder="Search plugins"
-                        onSearch={value => console.log(value)}
+                        onSearch={value => this.searchFor(value)}
+                        className="pluginSearchBar"
                         enterButton
                     />
                 </Col>
@@ -98,7 +126,7 @@ export default class PluginGrid extends React.Component {
                                     </a>
                                     <div className="tagContainer">
                                         {plugin.Tags.map(tag => 
-                                            <a key={plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} >{tag}</a>
+                                            <a key={plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} value={tag} onClick={() => {this.filterByTag(tag)}}>{tag}</a>
                                         )}
                                     </div>
                                     <div className="pluginInfo">

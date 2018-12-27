@@ -531,7 +531,7 @@ input[type=submit]:hover {
   background-color: #883996;
 }
 
-.ant-form-item-children input:hover, .accountInputs > input:hover {
+.ant-form-item-children input:hover, .accountInputs > input:hover, .pluginSearchBar > input:hover {
   color: #000000 !important;
 }
 
