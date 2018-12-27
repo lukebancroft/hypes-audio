@@ -3,7 +3,7 @@ import { Table, Tag, Button, Modal, Input, Icon, Form, Upload } from 'antd';
 import firestore from "../firestore";
 import EditCreatePluginFieldset from './EditCreatePluginFieldset';
 
-export default class ParametersTable extends React.Component {
+export default class PluginTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,12 +13,19 @@ export default class ParametersTable extends React.Component {
           deleteModalVisible: false,
           modalType: '',
           confirmLoading: false,
-          currentPlugin: []
+          currentPlugin: [],
+          formValues: []
         }
 
         this.makeRows = this.makeRows.bind(this);
         this.editPlugin = this.editPlugin.bind(this);
+        this.createPlugin = this.createPlugin.bind(this);
         this.deletePlugin = this.deletePlugin.bind(this);
+        this.handleFormFilled = this.handleFormFilled.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
 
     componentDidMount() {
@@ -83,28 +90,49 @@ export default class ParametersTable extends React.Component {
       
     }
 
-    handleEdit = () => {
+    handleFormFilled(values) {
       this.setState({
-        confirmLoading: true,
-      });
-      setTimeout(() => {
-        this.setState({
-          editCreateModalVisible: false,
-          confirmLoading: false,
-        });
-      }, 2000);
+        formValues: values
+      }, () => {
+        console.log(this.state.formValues);
+        if (this.state.modalType === 'Edit') {
+          this.handleEdit();
+        }
+        else if (this.state.modalType === 'Create') {
+          this.handleCreate();
+        }
+      })
     }
 
-    handleCreate = () => {
+    handleEdit() {
+      this.setState({
+        confirmLoading: true,
+      }, () => {
+        firestore.collection('plugins').doc(this.state.currentPlugin.key).update({
+          Name: this.state.formValues.name,
+          Comment: this.state.formValues.description,
+          Tags: this.state.formValues.tags,
+          ImageUrl: this.state.currentPlugin.image,
+          url: this.state.formValues.url
+        }).then( ref => {
+          this.setState({
+            deleteModalVisible: false,
+            confirmLoading: false,
+          });
+        })
+      });
+    }
+
+    handleCreate() {
       this.setState({
         confirmLoading: true,
       }, () => {
         firestore.collection('plugins').add({
-          Name: 'New',
-          Comment: 'This is a new plugin',
-          Tags: ['Filter', 'Instrument'],
+          Name: this.state.formValues.name,
+          Comment: this.state.formValues.description,
+          Tags: this.state.formValues['select-multiple'],
           ImageUrl: 'https://firebasestorage.googleapis.com/v0/b/hypes-audio.appspot.com/o/plugin_images%2FGxDuck_Delay.png?alt=media&token=d34dbe3a-0148-4518-84b0-4b409935754d',
-          url: 'www.hypesaudio.com',
+          url: this.state.formValues.url,
           Creator: 'Luke Bancroft-Richardson',
           collection: 'shop'
         }).then(ref => {
@@ -117,19 +145,20 @@ export default class ParametersTable extends React.Component {
       });
     }
 
-    handleDelete = () => {
+    handleDelete() {
       this.setState({
         confirmLoading: true,
+      }, () => {
+        firestore.collection('plugins').doc(this.state.currentPlugin.key).delete().then( ref => {
+          this.setState({
+            deleteModalVisible: false,
+            confirmLoading: false,
+          });
+        })
       });
-      setTimeout(() => {
-        this.setState({
-          deleteModalVisible: false,
-          confirmLoading: false,
-        });
-      }, 2000);
     }
   
-    handleCancel = () => {
+    handleCancel() {
       this.setState({
         deleteModalVisible: false, editCreateModalVisible: false
       });
@@ -196,14 +225,18 @@ export default class ParametersTable extends React.Component {
         <Modal
           title="Edit plugin"
           visible={this.state.editCreateModalVisible}
-          onOk={this.handleEdit}
-          okText={this.state.modalType}
-          confirmLoading={this.state.confirmLoading}
           onCancel={this.handleCancel}
-          >
+          footer={[
+            <Button key="back" onClick={this.handleCancel}>Return</Button>,
+            <Button form="editCreateForm" key="submit" htmlType="submit" type="primary" loading={this.state.confirmLoading} >
+              {this.state.modalType}
+            </Button>,
+          ]}
+        >
 
           <EditCreateForm 
             currentPlugin={this.state.currentPlugin}
+            handleFormFilled={this.handleFormFilled.bind(this)}
           />
 
         </Modal>

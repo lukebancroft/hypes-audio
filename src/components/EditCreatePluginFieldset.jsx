@@ -6,6 +6,14 @@ const Option = Select.Option;
 export default class EditCreatePluginFieldset extends React.Component {
     constructor(props) {
         super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            this.props.handleFormFilled(values);
+        });
     }
 
   render() {
@@ -19,7 +27,7 @@ export default class EditCreatePluginFieldset extends React.Component {
     );
 
     return (
-        <Form layout="vertical">
+        <Form layout="vertical" onSubmit={this.handleSubmit} id="editCreateForm">
             <Form.Item label="Name">
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: 'Please input a name for the plugin!' }],
@@ -39,12 +47,11 @@ export default class EditCreatePluginFieldset extends React.Component {
             <Form.Item
                 label="Select tags"
                 >
-                {getFieldDecorator('select-multiple', {
-                    rules: [
-                    { required: true, message: 'Please select at least one tag!', type: 'array' },
-                    ],
+                {getFieldDecorator('tags', {
+                    rules: [{ required: true, message: 'Please select at least one tag!', type: 'array' }],
+                    initialValue: this.props.currentPlugin.tags
                 })(
-                    <Select mode="multiple" placeholder="Please select up to 2 tags">
+                    <Select mode="multiple" placeholder="Select your tags">
                         <Option value="filter">Filter</Option>
                         <Option value="phaser">Phaser</Option>
                         <Option value="modulator">Modulator</Option>
