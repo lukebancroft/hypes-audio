@@ -38,6 +38,7 @@ export default class EditCreatePluginFieldset extends React.Component {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('keys');
+        console.log(keys);
         const nextKeys = keys.concat(++paramId);
         // can use data-binding to set
         // important! notify form to detect changes
@@ -56,9 +57,9 @@ export default class EditCreatePluginFieldset extends React.Component {
       </div>
     );
 
-    getFieldDecorator('keys', { initialValue: (this.props.currentPlugin.Control ? this.props.currentPlugin.Control : 0) });
+    getFieldDecorator('keys', { initialValue: (this.props.currentPlugin.Control ? this.props.currentPlugin.Control : []) });
     const keys = getFieldValue('keys');
-    const parameterItems = this.props.currentPlugin.Control ? (keys.map((k, index) => (
+    const parameterItems = keys.map((k, index) => (
         <div key={k}>
             <Form.Item
                 label={index === 0 ? 'Parameters' : ''}
@@ -122,7 +123,7 @@ export default class EditCreatePluginFieldset extends React.Component {
             </InputGroup>
             </Form.Item>
         </div>
-    ))) : null;
+    ));
 
     return (
         <Form layout="vertical" onSubmit={this.handleSubmit} id="editCreateForm">
