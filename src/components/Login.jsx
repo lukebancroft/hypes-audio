@@ -10,7 +10,7 @@ export default class Login extends React.Component {
             currentPage: 'login',
             email: '',
             password: '',
-            user: null
+            user: this.props.user
         }
         this.handleChange = this.handleChange.bind(this);
 
@@ -27,6 +27,7 @@ export default class Login extends React.Component {
         auth.onAuthStateChanged((user) => {
           if (user) {
             this.setState({ user });
+            this.props.handleUserChange(user);
           } 
         });
     }
@@ -42,6 +43,7 @@ export default class Login extends React.Component {
                 <div className="container">
                 {this.state.user ?
                             <div>
+                                <p style={{textAlign: 'center'}}>Bienvenu {this.state.user.email} !</p>
                                 <button onClick={this.logout} className='user-profile btn'>
                                     <img className='user-photo' src={this.state.user.photoURL} alt="User" />
                                     <div className="logout">LOGOUT</div>
@@ -129,6 +131,7 @@ export default class Login extends React.Component {
                 password: '',
                 user: null
             });
+            this.props.handleUserChange(null);
             alert("Logout");
         });
     }
@@ -140,7 +143,8 @@ export default class Login extends React.Component {
             const user = result.user;
             this.setState({
                 user
-            });            
+            });
+            this.props.handleUserChange(user);            
             alert("Login Success");
         });
     }
@@ -152,6 +156,7 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
+            this.props.handleUserChange(user);
             alert("Login Success");
         });
     }
@@ -163,6 +168,7 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
+            this.props.handleUserChange(user);
             alert("Login Success");
         });
     }
@@ -174,6 +180,7 @@ export default class Login extends React.Component {
             this.setState({
                 user
             });
+            this.props.handleUserChange(user);
             alert("Login Success");
         });
     }
@@ -188,6 +195,7 @@ export default class Login extends React.Component {
                 password: '',
                 currentPage: 'login'
             });
+            this.props.handleUserChange(null);
             alert("Creation Success");
         });
     }

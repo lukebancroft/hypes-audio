@@ -14,7 +14,8 @@ class App extends Component {
     super(props);
     this.state = {
         currentPage: 'home',
-        details: []
+        details: [],
+        user: null
     }
   }
 
@@ -23,7 +24,10 @@ class App extends Component {
     if (this.state.currentPage === 'home') {
       pageContent =(
         <Layout className="layoutContent">
-          <Login/>
+          <Login
+            user = {this.props.user}
+            handleUserChange = {this.handleUserChange.bind(this)}
+          />
         </Layout>
       );
     } else if (this.state.currentPage === 'gallery') {
@@ -72,11 +76,18 @@ class App extends Component {
               currentPage = {this.state.currentPage}
               menuMode = "horizontal"
               handlePageChange = {this.handlePageChange.bind(this)}
+              user = {this.state.user}
             />
             {pageContent}
           </Layout>
       </div>
     )
+  }
+
+  handleUserChange(loggedUser){
+    this.setState({
+      user: loggedUser
+    });
   }
 
   handlePageChange = (e) => {
