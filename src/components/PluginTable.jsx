@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Tag, Button, Modal, Input, Icon, Form, Upload } from 'antd';
+import { Table, Tag, Button, Modal, Form } from 'antd';
 import firestore from "../firestore";
 import {auth} from "../firestore";
 import EditCreatePluginFieldset from './EditCreatePluginFieldset';
@@ -42,7 +42,7 @@ export default class PluginTable extends React.Component {
     makeRows() {
       let dataContent = [];
 
-      this.state.plugins.map( plugin => {
+      this.state.plugins.forEach( plugin => {
         dataContent.push(
           {
             'key': plugin.id,
@@ -60,9 +60,13 @@ export default class PluginTable extends React.Component {
 
     editPlugin(plugin) {
       console.log(plugin);
-      this.setState({
-        currentPlugin: plugin, editCreateModalVisible: true, modalType: 'Edit'
-      });
+      firestore.collection('plugins').doc(plugin.key).get()
+      .then(doc => {
+        console.log(doc.data());
+        this.setState({
+          currentPlugin: doc.data(), editCreateModalVisible: true, modalType: 'Edit'
+        });
+      })
     }
 
     createPlugin() {
@@ -110,7 +114,7 @@ export default class PluginTable extends React.Component {
       this.setState({
         confirmLoading: true,
       }, () => {
-        firestore.collection('plugins').doc(this.state.currentPlugin.key).update({
+        firestore.collection('plugins').doc(this.state.currentPlugin.id).update({
           Name: this.state.formValues.name,
           Comment: this.state.formValues.description,
           Tags: this.state.formValues.tags,
@@ -130,15 +134,31 @@ export default class PluginTable extends React.Component {
         confirmLoading: true,
       }, () => {
         let username = auth.currentUser.displayName ? auth.currentUser.displayName : auth.currentUser.email;
-        firestore.collection('plugins').add({
+        let pluginDoc = {
           Name: this.state.formValues.name,
           Comment: this.state.formValues.description,
           Tags: this.state.formValues.tags,
           ImageUrl: 'https://firebasestorage.googleapis.com/v0/b/hypes-audio.appspot.com/o/plugin_images%2FGxDuck_Delay.png?alt=media&token=d34dbe3a-0148-4518-84b0-4b409935754d',
           url: this.state.formValues.url,
           Creator: username,
-          collection: 'shop'
-        }).then(ref => {
+          Collection: 'shop',
+          Parameters: ['Control', 'Default', 'Min', 'Max'],
+          Control: [],
+          Min: [],
+          Default: [],
+          Max: []
+        };
+
+        if (this.state.formValues.keys && this.state.formValues.keys.length > 0) {
+          this.state.formValues.keys.forEach(paramKey => {
+            pluginDoc.Control.push(this.state.formValues.parameters[paramKey]);
+            pluginDoc.Min.push(this.state.formValues.parameterMinValues[paramKey]);
+            pluginDoc.Default.push(this.state.formValues.parameterDefaultValues[paramKey]);
+            pluginDoc.Max.push(this.state.formValues.parameterMaxValues[paramKey]);
+          })
+        }
+        
+        firestore.collection('plugins').add(pluginDoc).then(ref => {
           console.log('Added plugin with ID: ', ref.id);
           this.setState({
             editCreateModalVisible: false,
@@ -223,7 +243,7 @@ export default class PluginTable extends React.Component {
       <div>
         <Button icon='cloud-upload' className='uploadButton' onClick={() => {this.createPlugin()}} >Upload a new plugin</Button>
 
-        <Table columns={columns} dataSource={this.state.data} pagination={false} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 10}} scroll={{ x: 1800 }} title={() => 'Your plugins'} />
+        <Table columns={columns} dataSource={this.state.data} pagination={{pageSizeOptions: ['5', '10', '15'], showSizeChanger: true, defaultPageSize: 10}} scroll={{ x: 1800 }} title={() => 'Your plugins'} />
         
         <Modal
           title="Edit plugin"

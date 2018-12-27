@@ -3,9 +3,6 @@ import { Row, Col } from 'antd';
 import PluginTable from './PluginTable';
 
 export default class AccountManager extends React.Component {
-    constructor(props) {
-      super(props);
-    }
 
   render() {
     

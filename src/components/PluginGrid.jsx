@@ -93,18 +93,18 @@ export default class PluginGrid extends React.Component {
                         <Masonry>
                             {this.state.plugins.map(plugin => 
                                 <div  key={plugin.Name} className="stack-card">
-                                    <a onClick={() => {this.props.goToDetails(plugin)}}>
+                                    <a onClick={() => {this.props.goToDetails(plugin)}} href={"#" + plugin.id} >
                                         <img src={plugin.ImageUrl} alt={plugin.Name} onLoad={this.imageCount}></img>
                                     </a>
                                     <div className="tagContainer">
                                         {plugin.Tags.map(tag => 
-                                            <a key={plugin.Name + "_" + tag} className="pluginTag">{tag}</a>
+                                            <a key={plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} >{tag}</a>
                                         )}
                                     </div>
                                     <div className="pluginInfo">
                                         <Divider />
-                                        <a onClick={() => {this.props.goToDetails(plugin)}}>{plugin.Name}</a>
-                                        <a className="creator">{plugin.Creator}</a>
+                                        <a onClick={() => {this.props.goToDetails(plugin)}} href={"#" + plugin.id} >{plugin.Name}</a>
+                                        <a className="creator" onClick={() => {this.props.goToDetails(plugin)}} href={"#" + plugin.id} >{plugin.Creator}</a>
                                     </div>
                                 </div>
                             )}

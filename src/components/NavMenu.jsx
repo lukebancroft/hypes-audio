@@ -1,5 +1,4 @@
 import React from 'react';
-import {auth} from "../firestore";
 import { Menu, Icon } from 'antd';
 
 export default class NavMenu extends React.Component {

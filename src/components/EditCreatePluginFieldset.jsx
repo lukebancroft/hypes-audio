@@ -1,7 +1,10 @@
 import React from 'react';
-import { Input, Icon, Form, Upload, Select } from 'antd';
+import { Input, Icon, Form, Upload, Select, Button } from 'antd';
 const { TextArea } = Input;
+const InputGroup = Input.Group;
 const Option = Select.Option;
+
+let paramId = 0;
 
 export default class EditCreatePluginFieldset extends React.Component {
     constructor(props) {
@@ -16,8 +19,35 @@ export default class EditCreatePluginFieldset extends React.Component {
         });
     }
 
+    remove = (k) => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        // We need at least one passenger
+        if (keys.length === 1) {
+          return;
+        }
+    
+        // can use data-binding to set
+        form.setFieldsValue({
+          keys: keys.filter(key => key !== k),
+        });
+      }
+    
+      add = () => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        const nextKeys = keys.concat(++paramId);
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+          keys: nextKeys,
+        });
+      }
+
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
 
     const uploadButton = (
       <div>
@@ -26,12 +56,81 @@ export default class EditCreatePluginFieldset extends React.Component {
       </div>
     );
 
+    getFieldDecorator('keys', { initialValue: (this.props.currentPlugin.Control ? this.props.currentPlugin.Control : 0) });
+    const keys = getFieldValue('keys');
+    console.log(keys);
+    const parameterItems = keys.map((k, index) => (
+        <div key={k}>
+            <Form.Item
+                label={index === 0 ? 'Parameters' : ''}
+                required={true}
+            >
+                {getFieldDecorator(`parameters[${k}]`, {
+                validateTrigger: ['onChange', 'onBlur'],
+                rules: [{
+                    required: true,
+                    whitespace: true,
+                    message: "Please input the parameter name or delete this field.",
+                }],
+                initialValue: (this.props.currentPlugin.Control && this.props.currentPlugin.Control[index]) ? this.props.currentPlugin.Control[index] : null
+                })(
+                <Input placeholder={"Parameter " + (index+1)} style={{ width: '60%', marginRight: 8 }} />
+                )}
+                {keys.length > 1 ? (
+                    <Icon
+                        className="dynamic-delete-button"
+                        type="minus-circle-o"
+                        onClick={() => this.remove(k)}
+                    />
+                ) : null}
+            </Form.Item>
+            <Form.Item >
+
+                <InputGroup compact>
+                {getFieldDecorator(`parameterMinValues[${k}]`, {
+                validateTrigger: ['onChange', 'onBlur'],
+                rules: [{
+                    required: true,
+                    whitespace: true,
+                    message: "Please input the parameter values or delete this field.",
+                }],
+                initialValue: (this.props.currentPlugin.Min && this.props.currentPlugin.Min[index]) ? this.props.currentPlugin.Min[index] : null
+                })(
+                    <Input style={{ width: '25%' }} placeholder="Min" />
+                )}
+                {getFieldDecorator(`parameterDefaultValues[${k}]`, {
+                validateTrigger: ['onChange', 'onBlur'],
+                rules: [{
+                    required: true,
+                    whitespace: true,
+                    message: "Please input the parameter values or delete this field.",
+                }],
+                initialValue: (this.props.currentPlugin.Default && this.props.currentPlugin.Default[index]) ? this.props.currentPlugin.Default[index] : null
+                })(
+                    <Input style={{ width: '25%' }} placeholder="Default" />
+                )}
+                {getFieldDecorator(`parameterMaxValues[${k}]`, {
+                validateTrigger: ['onChange', 'onBlur'],
+                rules: [{
+                    required: true,
+                    whitespace: true,
+                    message: "Please input the parameter values or delete this field.",
+                }],
+                initialValue: (this.props.currentPlugin.Max && this.props.currentPlugin.Max[index]) ? this.props.currentPlugin.Max[index] : null
+                })(
+                    <Input style={{ width: '25%' }} placeholder="Max" />
+                )}
+            </InputGroup>
+            </Form.Item>
+        </div>
+    ));
+
     return (
         <Form layout="vertical" onSubmit={this.handleSubmit} id="editCreateForm">
-            <Form.Item label="Name">
+            <Form.Item label="Name" >
               {getFieldDecorator('name', {
                 rules: [{ required: true, message: 'Please input a name for the plugin!' }],
-                initialValue: this.props.currentPlugin.name
+                initialValue: this.props.currentPlugin.Name
               })(
                 <Input placeholder='Enter plugin name' />
               )}
@@ -39,7 +138,7 @@ export default class EditCreatePluginFieldset extends React.Component {
             <Form.Item label="Description">
             {getFieldDecorator('description', {
                 rules: [{ required: true, message: 'Please input a description for the plugin!' }],
-                initialValue: this.props.currentPlugin.comment
+                initialValue: this.props.currentPlugin.Comment
               })(
                 <TextArea rows={4} placeholder='Enter plugin description' />
               )}
@@ -49,7 +148,7 @@ export default class EditCreatePluginFieldset extends React.Component {
                 >
                 {getFieldDecorator('tags', {
                     rules: [{ required: true, message: 'Please select at least one tag!', type: 'array' }],
-                    initialValue: this.props.currentPlugin.tags
+                    initialValue: this.props.currentPlugin.Tags
                 })(
                     <Select mode="multiple" placeholder="Select your tags">
                         <Option value="filter">Filter</Option>
@@ -77,6 +176,10 @@ export default class EditCreatePluginFieldset extends React.Component {
                 <Input placeholder='Enter plugin url' />
               )}
             </Form.Item>
+            {parameterItems}
+            <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
+                <Icon type="plus" /> Add parameter
+            </Button>
         </Form>
     );
   }

@@ -13,6 +13,7 @@ export default class PluginDetails extends React.Component {
     componentWillMount() {
         let dataContent = [];
         let currentParam = '';
+        
         if (this.props.plugin.Parameters) {
             for(let i = 0; i < this.props.plugin.Parameters.length; i++) {
                 currentParam = this.props.plugin.Parameters[i].toString();
@@ -34,7 +35,7 @@ export default class PluginDetails extends React.Component {
             </div>    
 
             <div className="pedalboard-count-container">
-                <a className="pedalboard-count" href="#">
+                <a className="pedalboard-count" href="#count">
                     <span>39</span>
                 </a>
                 <span className="pedalboard-count-text">Pedalboards using it</span>
@@ -44,7 +45,7 @@ export default class PluginDetails extends React.Component {
             
             <div className="tagContainer">
                 {this.props.plugin.Tags.map(tag => 
-                    <a key={this.props.plugin.Name + "_" + tag} className="pluginTag">{tag}</a>
+                    <a key={this.props.plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} >{tag}</a>
                 )}
             </div>
             <p className="description">{this.props.plugin.Comment}</p>
