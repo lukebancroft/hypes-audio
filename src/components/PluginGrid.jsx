@@ -23,22 +23,50 @@ export default class PluginGrid extends React.Component {
       this.tryDisableLoadMore = this.tryDisableLoadMore.bind(this);
       this.searchFor = this.searchFor.bind(this);
       this.filterByTag = this.filterByTag.bind(this);
+      this.removeTagFilter = this.removeTagFilter.bind(this);
     }
 
     componentDidMount() {
         const self = this;
         this.enableLoader();
-        if (this.state.searchName === '' || this.state.searchTag === '') {
+        this.props.getPaginatedFSdoc("plugins", "Collection", "shop", this.state.pluginsPerPage, null, function(plugins) {
+            self.setState({ plugins: plugins });
+        })
+    }
+
+    /*shouldComponentUpdate(nextProps, nextState) {
+        console.log('shouldupdate');
+        console.log('old.tag : "' + this.state.searchTag + '" | new.tag : "' + nextState.searchTag + '"');
+        console.log(this.state.searchTag !== nextState.searchTag);
+        console.log('old.name : "' + this.state.searchName + '" | new.name : "' + nextState.searchName + '"');
+        console.log(this.state.searchName !== nextState.searchName);
+        console.log(this.state.plugins);
+        console.log(nextState.plugins);
+        console.log(this.state.plugins !== nextState.plugins);
+        if (this.state.searchTag !== nextState.searchTag || this.state.searchName !== nextState.searchName || this.state.plugins !== nextState.plugins) {
+            console.log('true');
+            return true;
+        }
+        console.log('false');
+        return false;
+    }
+
+    componentDidUpdate() {
+        console.log('didupdate');
+        const self = this;
+        this.enableLoader();
+        if ((this.state.searchName === '' && this.state.searchTag === '') || (this.state.searchName !== '' && this.state.searchTag === '') || (this.state.searchName === '' && this.state.searchTag !== '')) {
             this.props.getPaginatedFSdoc("plugins", "Collection", "shop", this.state.pluginsPerPage, null, function(plugins) {
-                self.setState({ plugins: plugins });
+                self.setState({ loadedImages: 0, plugins: plugins });
             })
         }
         else {
             this.props.getPaginatedFSdocByTagAndOrName("plugins", "Collection", "shop", this.state.searchTag, this.state.searchName, this.state.pluginsPerPage, null, function(plugins) {
-                self.setState({ plugins: plugins });
+                console.log(plugins);
+                self.setState({ loadedImages: 0, plugins: plugins });
             })
         }
-    }
+    }*/
 
     loadMore() {
         const self = this;
@@ -94,7 +122,17 @@ export default class PluginGrid extends React.Component {
         this.setState({ searchTag: tag });
     }
 
+    removeTagFilter() {
+        this.setState({ searchTag: '' });
+    }
+
   render() {
+
+    let filterTag = (this.state.searchTag !== '') ? 
+        (<div className="tagContainer tagFilter">
+            <a className="pluginTag" href={"#" + this.state.searchTag +"_tag"} onClick={() => {this.removeTagFilter()}}>{this.state.searchTag}</a>
+            <p onClick={() => {this.removeTagFilter()}}>(Click to remove filter)</p>
+        </div>) : null;
     
     return (
         <div>
@@ -109,6 +147,7 @@ export default class PluginGrid extends React.Component {
                         className="pluginSearchBar"
                         enterButton
                     />
+                    {filterTag}
                 </Col>
             </Row>
             <br/>
@@ -118,7 +157,7 @@ export default class PluginGrid extends React.Component {
             <div id="stack">
                 <Row>
                     <Col span={20} offset={2}>
-                        <Masonry>
+                        <Masonry >
                             {this.state.plugins.map(plugin => 
                                 <div  key={plugin.Name} className="stack-card">
                                     <a onClick={() => {this.props.goToDetails(plugin)}} href={"#" + plugin.id} >
@@ -126,7 +165,7 @@ export default class PluginGrid extends React.Component {
                                     </a>
                                     <div className="tagContainer">
                                         {plugin.Tags.map(tag => 
-                                            <a key={plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} value={tag} onClick={() => {this.filterByTag(tag)}}>{tag}</a>
+                                            <a key={plugin.Name + "_" + tag} className="pluginTag" href={"#" + tag +"_tag"} onClick={() => {this.filterByTag(tag)}}>{tag}</a>
                                         )}
                                     </div>
                                     <div className="pluginInfo">

@@ -570,3 +570,17 @@ input[type=submit]:hover {
   max-width: 100px;
   max-height: 64px;
 }
+
+.tagFilter a {
+  margin-top: 15px;
+}
+
+.tagFilter p {
+  font-size: 0.75rem;
+  color: #883996;
+  cursor: pointer;
+}
+
+.tagFilter p:hover {
+  cursor: pointer;
+}
